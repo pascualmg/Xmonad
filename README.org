@@ -17,50 +17,13 @@ Este repositorio contiene mi configuración personal de XMonad, incluyendo subm�
 
 Para configurar este repositorio desde cero:
 
-1. Crea un nuevo directorio e inicializa Git:
+1. importante clonarlo en ~/.config/xmonad
 
    #+begin_src bash
-   mkdir ~/mi-xmonad
-   cd ~/mi-xmonad
-   git init
+cd .config
+git clone ...
+git submodule update --init --recursive
    #+end_src
-
-2. Añade los submódulos de xmonad y xmonad-contrib:
-
-   #+begin_src bash
-   git submodule add https://github.com/xmonad/xmonad.git
-   git submodule add https://github.com/xmonad/xmonad-contrib.git
-   #+end_src
-
-3. Copia tu archivo de configuración de XMonad:
-
-   #+begin_src bash
-   cp ~/.xmonad/xmonad.hs .
-   #+end_src
-
-4. Crea el archivo stack.yaml:
-
-   #+begin_src yaml
-   resolver: lts-21.17  # Ajusta esto a la versión de GHC que estés usando
-   packages:
-   - .
-   - xmonad
-   - xmonad-contrib
-   #+end_src
-
-5. Crea un .gitignore:
-
-   #+begin_src bash
-   echo ".stack-work/" > .gitignore
-   #+end_src
-
-6. Añade y haz commit de los cambios:
-
-   #+begin_src bash
-   git add .
-   git commit -m "Configuración inicial con submódulos para xmonad y xmonad-contrib"
-   #+end_src
-
 ** Compilación
 
 Para compilar XMonad con esta configuración:
@@ -68,6 +31,9 @@ Para compilar XMonad con esta configuración:
 #+begin_src bash
 stack install
 #+end_src
+
+Por supuesto tienes que tener stack , recomiendo o ghcup o =nix-shell -p stack=
+
 
 ** Actualización de Submódulos
 
@@ -77,23 +43,6 @@ Para actualizar los submódulos a las últimas versiones:
 git submodule update --remote --merge
 #+end_src
 
-** Uso de la Configuración
-
-Para que XMonad use esta configuración:
-
-#+begin_src bash
-ln -s ~/mi-xmonad/xmonad.hs ~/.xmonad/xmonad.hs
-#+end_src
-
-** Clonación del Repositorio
-
-Cuando clones este repositorio en una nueva máquina:
-
-#+begin_src bash
-git clone <URL_DEL_REPOSITORIO>
-cd <DIRECTORIO_DEL_REPOSITORIO>
-git submodule update --init --recursive
-#+end_src
 
 ** Ventajas de esta Configuración
 
