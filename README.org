@@ -1,0 +1,115 @@
+#+TITLE: Mi Configuración de XMonad
+#+AUTHOR: Pascual M.G.
+#+DATE: [2024-03-17 Dom]
+
+* Configuración de XMonad con Submódulos
+
+Este repositorio contiene mi configuración personal de XMonad, incluyendo submódulos para xmonad y xmonad-contrib.
+
+** Estructura del Repositorio
+
+- xmonad.hs: Mi configuración personal de XMonad
+- xmonad/: Submódulo del repositorio principal de XMonad
+- xmonad-contrib/: Submódulo del repositorio de XMonad-Contrib
+- stack.yaml: Configuración de Stack para compilar XMonad
+
+** Configuración Inicial
+
+Para configurar este repositorio desde cero:
+
+1. Crea un nuevo directorio e inicializa Git:
+
+   #+begin_src bash
+   mkdir ~/mi-xmonad
+   cd ~/mi-xmonad
+   git init
+   #+end_src
+
+2. Añade los submódulos de xmonad y xmonad-contrib:
+
+   #+begin_src bash
+   git submodule add https://github.com/xmonad/xmonad.git
+   git submodule add https://github.com/xmonad/xmonad-contrib.git
+   #+end_src
+
+3. Copia tu archivo de configuración de XMonad:
+
+   #+begin_src bash
+   cp ~/.xmonad/xmonad.hs .
+   #+end_src
+
+4. Crea el archivo stack.yaml:
+
+   #+begin_src yaml
+   resolver: lts-21.17  # Ajusta esto a la versión de GHC que estés usando
+   packages:
+   - .
+   - xmonad
+   - xmonad-contrib
+   #+end_src
+
+5. Crea un .gitignore:
+
+   #+begin_src bash
+   echo ".stack-work/" > .gitignore
+   #+end_src
+
+6. Añade y haz commit de los cambios:
+
+   #+begin_src bash
+   git add .
+   git commit -m "Configuración inicial con submódulos para xmonad y xmonad-contrib"
+   #+end_src
+
+** Compilación
+
+Para compilar XMonad con esta configuración:
+
+#+begin_src bash
+stack install
+#+end_src
+
+** Actualización de Submódulos
+
+Para actualizar los submódulos a las últimas versiones:
+
+#+begin_src bash
+git submodule update --remote --merge
+#+end_src
+
+** Uso de la Configuración
+
+Para que XMonad use esta configuración:
+
+#+begin_src bash
+ln -s ~/mi-xmonad/xmonad.hs ~/.xmonad/xmonad.hs
+#+end_src
+
+** Clonación del Repositorio
+
+Cuando clones este repositorio en una nueva máquina:
+
+#+begin_src bash
+git clone <URL_DEL_REPOSITORIO>
+cd <DIRECTORIO_DEL_REPOSITORIO>
+git submodule update --init --recursive
+#+end_src
+
+** Ventajas de esta Configuración
+
+- Versionado de la configuración personal de XMonad
+- Fácil actualización de xmonad y xmonad-contrib como submódulos
+- Compilación directa desde el repositorio
+- Replicación sencilla de la configuración en diferentes máquinas
+
+** Notas Importantes
+
+- Después de actualizar los submódulos, es necesario hacer un commit adicional en el repositorio principal para registrar los nuevos punteros de los submódulos.
+- Asegúrate de tener instaladas las dependencias necesarias para compilar XMonad en tu sistema.
+
+* Contribuciones
+
+Siéntete libre de hacer fork de este repositorio y adaptarlo a tus necesidades. Si encuentras mejoras o correcciones, las pull requests son bienvenidas.
+
+* Licencia
+No hace falta , haz loque te de la gana xD
