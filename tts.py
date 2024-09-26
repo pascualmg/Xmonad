@@ -1,51 +1,77 @@
 import os
 import sys
 import signal
-from gtts import gTTS
 import subprocess
+import argparse
+from gtts import gTTS
+import gtts.lang
+from langdetect import detect
 
-# Velocidad de reproducción (1.0 es normal, 2.0 es el doble de rápido, 0.5 es la mitad de rápido)
-SPEED = 1.5
+# Configuración por defecto
+DEFAULT_SPEED = 1.25
+DEFAULT_CLIPBOARD_TOOL = 'xsel'
 
 def kill_previous_instances():
-    # Mata todas las instancias previas de mpg321
     os.system("pkill mpg321")
 
-def speak(text, lang='es', speed=SPEED):
+def list_languages():
+    print("Idiomas disponibles:")
+    for lang, name in gtts.lang.tts_langs().items():
+        print(f"{lang}: {name}")
+
+def get_clipboard_content(tool):
+    if tool == 'xsel':
+        return subprocess.getoutput("xsel -o")
+    elif tool == 'wl-clipboard':
+        return subprocess.getoutput("wl-paste")
+    elif tool == 'emacs':
+        return subprocess.getoutput("emacsclient --eval '(car kill-ring)'")
+    else:
+        raise ValueError(f"Herramienta de portapapeles no soportada: {tool}")
+
+def speak(text, speed=DEFAULT_SPEED):
     kill_previous_instances()
 
-    tts = gTTS(text=text, lang=lang)
+    detected_lang = detect(text)
+    tts = gTTS(text=text, lang=detected_lang, tld='es')
     tts.save("output.mp3")
 
-    # Usa sox para ajustar la velocidad y mpg321 para reproducir
     cmd = f"sox output.mp3 output_speed.mp3 tempo {speed} && mpg321 output_speed.mp3"
     process = subprocess.Popen(cmd, shell=True)
-
-    # Espera a que termine la reproducción
     process.wait()
 
-    # Limpia los archivos temporales
     os.remove("output.mp3")
     os.remove("output_speed.mp3")
 
 if __name__ == "__main__":
-    # Configura un manejador de señales para limpiar archivos si el script es interrumpido
+    parser = argparse.ArgumentParser(description='Text-to-Speech avanzado para Linux')
+    parser.add_argument('--speed', type=float, default=DEFAULT_SPEED, help='Velocidad de reproducción')
+    parser.add_argument('--list-languages', action='store_true', help='Listar idiomas disponibles')
+    parser.add_argument('--clipboard', choices=['xsel', 'wl-clipboard', 'emacs'],
+                        default=DEFAULT_CLIPBOARD_TOOL, help='Herramienta de portapapeles a usar')
+    parser.add_argument('text', nargs='*', help='Texto a leer (opcional si se usa entrada estándar o portapapeles)')
+    args = parser.parse_args()
+
     def signal_handler(sig, frame):
         kill_previous_instances()
-        if os.path.exists("output.mp3"):
-            os.remove("output.mp3")
-        if os.path.exists("output_speed.mp3"):
-            os.remove("output_speed.mp3")
+        for file in ["output.mp3", "output_speed.mp3"]:
+            if os.path.exists(file):
+                os.remove(file)
         sys.exit(0)
 
     signal.signal(signal.SIGINT, signal_handler)
 
-    if len(sys.argv) > 1:
-        input_text = " ".join(sys.argv[1:])
+    if args.list_languages:
+        list_languages()
     else:
-        input_text = sys.stdin.read().strip()
+        if args.text:
+            input_text = " ".join(args.text)
+        elif not sys.stdin.isatty():
+            input_text = sys.stdin.read().strip()
+        else:
+            input_text = get_clipboard_content(args.clipboard)
 
-    if input_text:
-        speak(input_text)
-    else:
-        speak("sin texto para leer!")
+        if input_text:
+            speak(input_text, args.speed)
+        else:
+            print("Sin texto para leer. Usa --help para ver las opciones.")
