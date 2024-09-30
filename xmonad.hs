@@ -5,6 +5,8 @@ import XMonad.Util.SpawnOnce
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.Spacing()
 import XMonad.Actions.WithAll(sinkAll)
+import XMonad.Util.NamedScratchpad
+import qualified XMonad.StackSet as W
 
 myStartupHook :: X ()
 myStartupHook = do
@@ -19,6 +21,13 @@ myStartupHook = do
 myDmenuCommand :: String
 myDmenuCommand = "(flatpak list --app --columns=application | sed 's/^/flatpak run /' && dmenu_path) | sort -u | dmenu -i | ${SHELL:-\"/bin/sh\"} &"
 
+myScratchPads = [
+    NS "terminal" "alacritty --class scratchpad -e byobu" (className =? "scratchpad")
+        (customFloating $ W.RationalRect 0.1 0.1 0.8 0.8),
+    NS "doom" "doom run --class=scratchpad-notes" (className =? "scratchpad-notes")
+        (customFloating $ W.RationalRect 0.15 0.1 0.7 0.75)
+    ]
+
 main :: IO ()
 main = xmonad $ docks $ def
     { modMask = mod4Mask  -- Usa la tecla Windows como modificador
@@ -27,6 +36,7 @@ main = xmonad $ docks $ def
     , normalBorderColor = "#002b36"  -- Fondo
     , focusedBorderColor = "#268bd2"  -- Borde de la ventana activa
     , startupHook = myStartupHook
+    , manageHook = namedScratchpadManageHook myScratchPads <+> manageHook def
     }
     `additionalKeysP`
     [ ("M-p", spawn myDmenuCommand)
@@ -39,9 +49,14 @@ main = xmonad $ docks $ def
     -- Hunde todas las ventanas flotantes
     , ("M-s", sinkAll)
     --ides
-    , ("M-e", spawn "/home/passh/.config/emacs/bin/doom run")
+    , ("M-S-e", spawn "/home/passh/.config/emacs/bin/doom run")
     , ("M-i", spawn "$(which idea)")
-    --keyboard layout toggling
+    --keyboard es-us layout toggling izi
     , ("M-ñ", spawn "~/.config/xmonad/my-scripts/toggle-keyboard-layout.sh")
     , ("M-;", spawn "~/.config/xmonad/my-scripts/toggle-keyboard-layout.sh")
+    --scratchpads
+    , ("M-a", namedScratchpadAction myScratchPads "terminal")
+    , ("M-e", namedScratchpadAction myScratchPads "doom")
+    -- Flameshot GUI
+    , ("<Print>", spawn "flameshot gui")
     ]
