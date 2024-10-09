@@ -70,7 +70,7 @@ main = do
         }
         `additionalKeysP`
         [ ("M-p", spawn myDmenuCommand)
-        , ("M-S-l", spawn "slock")  -- Bloqueo de pantalla
+        , ("M-S-l", spawn "xscreensaver-command -lock")  -- glmatrix is cool
         , ("<XF86AudioLowerVolume>", spawn "amixer set Master 2%-")  -- Bajar volumen
         , ("<XF86AudioRaiseVolume>", spawn "amixer set Master 2%+")  -- Subir volumen
         , ("<XF86AudioMute>", spawn "amixer set Master toggle")  -- Silenciar/Activar sonido
