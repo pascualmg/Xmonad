@@ -12,6 +12,8 @@ import XMonad.Util.Run (spawnPipe)
 import System.IO (hPutStrLn)
 import XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
 import XMonad.Actions.GridSelect
+import XMonad.Layout.ThreeColumns
+
 
 myStartupHook :: X ()
 myStartupHook = do
@@ -35,6 +37,13 @@ myScratchPads = [
         (customFloating $ W.RationalRect 0.1 0.1 0.8 0.8)
     ]
 
+myLaoutHook = avoidStruts $ ThreeColMid 1 (3/100) (1/3) ||| tiled ||| Mirror tiled ||| Full
+  where
+     tiled   = Tall nmaster delta ratio
+     nmaster = 1      -- Número predeterminado de ventanas en el área maestra
+     ratio   = 1/2    -- Proporción predeterminada del área ocupada por el área maestra
+     delta   = 3/100  -- Porcentaje del área de la pantalla para incrementar/reducir
+
 main :: IO ()
 main = do
     xmproc <- spawnPipe "xmobar"  -- Inicia xmobar
@@ -46,7 +55,7 @@ main = do
         , focusedBorderColor = "#268bd2"  -- Borde de la ventana activa
         , startupHook = myStartupHook
         , manageHook = namedScratchpadManageHook myScratchPads <+> manageHook def
-        , layoutHook = avoidStruts $ layoutHook def  -- Evita que las ventanas cubran xmobar
+        , layoutHook = myLaoutHook
         , handleEventHook = handleEventHook def
         , logHook = dynamicLogWithPP xmobarPP
             { ppOutput = hPutStrLn xmproc
