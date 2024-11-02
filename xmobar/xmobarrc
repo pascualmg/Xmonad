@@ -1,0 +1,58 @@
+Config {
+    -- Apariencia básica
+    font = "xft:Monoid Nerd Font:size=16:bold"
+    , additionalFonts = [ "xft:Monoid Nerd Font:pixelsize=28:bold" ]
+    , borderColor = "#282c34"
+    , border = TopB
+    , bgColor = "#282c34"
+    , fgColor = "#abb2bf"
+    , alpha = 255
+    -- Posicionamiento
+    , position = Top
+    , textOffset = -1
+    , iconOffset = -1
+    -- Comportamiento
+    , lowerOnStart = True
+    , allDesktops = True
+    , overrideRedirect = True
+    , persistent = True
+    , hideOnStart = False
+    -- Comandos y monitores
+    , commands = [
+        -- GPU NVIDIA
+        Run Com "bash" ["-c", "nvidia-smi --query-gpu=temperature.gpu,utilization.gpu --format=csv,noheader,nounits | tr -d ' '"] "gpu" 10
+
+        -- CPU con alacritty configurado
+        , Run Cpu [ "-t", "<action=`alacritty --class=btop-monitor --option=font.size=12 --option=window.startup_mode=Maximized -e btop`><fn=1>\xf2db</fn> CPU: <total>%</action>"
+                , "-L", "3"
+                , "-H", "50"
+                , "-l", "#98c379"
+                , "-n", "#e5c07b"
+                , "-h", "#e06c75"
+                ] 10
+        -- Memoria RAM
+        , Run Memory [ "-t", "<action=`alacritty --class=btop-monitor --option=font.size=12 --option=window.startup_mode=Maximized -e btop`><fn=1>\xf233</fn> Mem: <usedratio>%</action>"
+                    , "-L", "50"
+                    , "-H", "80"
+                    , "-l", "#98c379"
+                    , "-n", "#e5c07b"
+                    , "-h", "#e06c75"
+                    ] 10
+        -- Fecha y hora con icono
+        , Run Date "<fn=1>\xf017</fn> %a %d %b %H:%M" "date" 10
+        -- Volumen del sistema
+        , Run Alsa "default" "Master"
+            [ "-t", "<action=`pavucontrol`><fn=1>\xf028</fn> <volume>%</action>"
+            , "--"
+            , "--on", ""
+            ]
+        -- XMonad Workspaces y Layout
+        , Run StdinReader
+        -- Bandeja del sistema
+        , Run Com "trayer-padding-icon" [] "trayerpad" 10
+    ]
+    -- Template
+    , sepChar = "%"
+    , alignSep = "}{"
+    , template = "} %StdinReader% { %cpu% | <action=`nvidia-settings`><fc=#98c379>GPU: %gpu%</fc></action> | %memory% | %alsa:default:Master% | %date% %trayerpad%"
+}
