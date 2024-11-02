@@ -24,7 +24,7 @@ import XMonad.Layout.NoBorders
 myStartupHook :: X ()
 myStartupHook = do
     spawnOnce "xrandr --output DP-0 --mode 5120x1440" -- Ajusta según tu configuración
-    spawnOnce "nitrogen --random --set-zoom-fill ~/wallpapers"
+    spawnOnce "nitrogen --random --set-zoom-fill ~/.config/xmonad/wallpapers"
     spawnOnce "picom -b"
     spawnOnce "~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox"
     spawnOnce "emacs --daemon || emacsclient -e '(kill-emacs)' && emacs --daemon"
@@ -121,7 +121,7 @@ main = do
         -- Alt-Tab
         , ("M1-<Tab>", spawn "alttab -w 1 -d 0")
         -- Cambiar wallpaper
-        , ("M-S-w", spawn "nitrogen --random --set-zoom-fill ~/wallpapers")
+        , ("M-S-w", spawn "nitrogen --random --set-zoom-fill ~/.config/xmonad/wallpapers")
         -- Controles de espaciado
         , ("M-S-plus", incScreenWindowSpacing 2)   -- Incrementa el espacio
         , ("M-S-minus", decScreenWindowSpacing 2)  -- Reduce el espacio
