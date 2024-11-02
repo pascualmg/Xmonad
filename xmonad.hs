@@ -24,7 +24,7 @@ import XMonad.Layout.NoBorders
 myStartupHook :: X ()
 myStartupHook = do
     spawnOnce "xrandr --output DP-0 --mode 5120x1440" -- Ajusta según tu configuración
-    spawnOnce "nitrogen --restore"  -- Restaura el fondo de pantalla
+    spawnOnce "nitrogen --random --set-zoom-fill ~/wallpapers"
     spawnOnce "picom -b"
     spawnOnce "~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox"
     spawnOnce "emacs --daemon || emacsclient -e '(kill-emacs)' && emacs --daemon"
